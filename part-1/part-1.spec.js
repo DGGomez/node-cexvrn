@@ -24,4 +24,14 @@ describe('#Part1', () => {
    * Example Usage:
    *  it('', () => {});
    * */
+  // check if correct types
+  it('task 1 should have correct length', () => {
+    expect(typeof part1.task1()[0].totalPremium).toEqual(typeof 0);
+  });
+  it('task 1 should have correct length', () => {
+    expect(typeof part1.task2()[0].totalPremium).toEqual(typeof 0);
+  });
+  it('task 1 should have correct length', () => {
+    expect(typeof part1.task3()[0]).toEqual(typeof '');
+  });
 });
