@@ -5,12 +5,27 @@
 
 const PROVIDERS = require('../shared/data.json');
 
-let data = JSON.parse(PROVIDERS);
 /**
  * Create a query that returns total premiums and fees available for retail industry
  */
 function task1() {
-  console.log(data);
+  var totalPrem = 0;
+  var totalFees = 0;
+  for (var i = 0; i < PROVIDERS.length; i++) {
+    if (PROVIDERS[i].industry == 'retail') {
+      PROVIDERS[i].prices.forEach((element) => {
+        if (element.premium != null && element.premium != '') {
+          totalPrem += parseInt(element.premium);
+        }
+        if (element.fee != null && element.fee != '') {
+          totalFees += parseInt(element.fee);
+        }
+      });
+    }
+  }
+
+  return [{ totalPremium: totalPrem, totalFees: totalFees }];
+
   /**
    * TODO: Your body goes here
    */
@@ -23,6 +38,17 @@ function task2() {
   /**
    * TODO: Your body goes here
    */
+  var minPrem = Number.MAX_SAFE_INTEGER;
+  for (var i = 0; i < PROVIDERS.length; i++) {
+    if (PROVIDERS[i].industry == 'technology') {
+      PROVIDERS[i].prices.forEach((element) => {
+        if (element.premium != null && element.premium != '') {
+          minPrem = Math.min(parseInt(element.premium), minPrem);
+        }
+      });
+    }
+  }
+  return [{ totalPremium: minPrem }];
 }
 
 /**
@@ -33,6 +59,19 @@ function task3() {
   /**
    * TODO: Your body goes here
    */
+  var results = [];
+  for (var i = 0; i < PROVIDERS.length; i++) {
+    if (PROVIDERS[i].industry == 'technology') {
+      PROVIDERS[i].prices.forEach((element) => {
+        if (element.premium != null && element.premium != '') {
+          if (parseInt(element.premium) >= 1000) {
+            results.push(PROVIDERS[i].name);
+          }
+        }
+      });
+    }
+  }
+  return results;
 }
 
 /**

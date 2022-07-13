@@ -9,9 +9,18 @@
  * that information if we have to (total price = premium + fee).
  */
 class Price {
-  constructor({ fee, premium }) {}
+  constructor({ fee, premium }) {
+    this.premium = premium;
+    this.fee = fee;
+  }
 
-  add(...prices) {}
+  add(...prices) {
+    prices.forEach((element) => {
+      this.premium += element.premium;
+      this.fee += element.fee;
+    });
+    return { premium: this.premium, fee: this.fee };
+  }
 }
 
 /**
@@ -56,7 +65,20 @@ class NestedPrice extends Price {
    * The argument `prices` should be an array of instances of
    * the class Price or NestedPrice.
    */
-  constructor(prices) {}
+  constructor(prices) {
+    super(prices);
+    this.premium = 0;
+    this.fee = 0;
+    prices.forEach((elem) => {
+      if (elem.hasOwnProperty('list')) {
+        this.premium += elem.premium;
+        this.fee += elem.fee;
+      } else {
+        this.premium += elem.premium;
+        this.fee += elem.fee;
+      }
+    });
+  }
 }
 
 /**
@@ -86,3 +108,10 @@ function task2() {
 }
 
 console.log(task2());
+
+module.exports = {
+  Price,
+  NestedPrice,
+  task1,
+  task2,
+};

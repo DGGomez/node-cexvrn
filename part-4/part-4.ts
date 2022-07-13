@@ -1,4 +1,4 @@
-import { scenarios } from './part-4.utils';
+import { ProviderResult, scenarios } from './part-4.utils';
 
 /**
  * @classdesc PricingEngineRunner
@@ -14,7 +14,6 @@ class PricingEngineRunner {
         scenario.timeout,
         scenario.providers
       );
-
       if (!result && scenario.result != null) {
         console.log(`TEST FAILED [#${scenario.id}]: Got no result`);
       } else if (
@@ -74,11 +73,48 @@ class PricingEngine {
    *  SUCCESS [#1]: Got expected Provider 2 at $250
    *
    */
+  async timeout(prom: Promise<any>, time: number) {
+    try {
+      return await Promise.race([
+        prom,
+        new Promise((_r, rej) => setTimeout(rej, time)),
+      ]);
+    } catch (e) {
+      return null;
+    }
+  }
 
   async getLowestPrice(timeout: number, providers: any) {
     /**
      * TODO: Your body goes here.
      */
+    // start max timeout
+    let lPrice: number = Number.MAX_SAFE_INTEGER;
+    let prov: ProviderResult = null;
+    let current;
+    try {
+      // call getPrice
+      for (let i = 0; i < providers.length; i++) {
+        // as they come in compare to lowest value
+        current = providers[i];
+        const result = await this.timeout(current.getPrice(), timeout);
+        if (result == null || result == undefined) continue;
+        if (
+          current.price != null &&
+          current.price > 0 &&
+          !current.throwError &&
+          lPrice > current.price
+        ) {
+          prov = current;
+          lPrice = current.price;
+        }
+      }
+
+      return prov;
+    } catch (e) {
+      console.log(e);
+      return prov;
+    }
   }
 }
 
@@ -88,8 +124,12 @@ const pricingEngineRunner = new PricingEngineRunner();
  * Note: No Action is Required, for testing purposes only.
  */
 async function run() {
-  const pricingEngine = new PricingEngine();
-  await pricingEngineRunner.runTests(pricingEngine);
+  try {
+    const pricingEngine = new PricingEngine();
+    await pricingEngineRunner.runTests(pricingEngine);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 run();

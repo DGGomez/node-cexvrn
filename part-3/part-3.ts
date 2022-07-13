@@ -88,6 +88,38 @@ class PriceEngine {
     /**
      * TODO: Your body goes here
      */
+    let priceList: Array<Price> = [];
+    let hPrice: number = Number.MIN_SAFE_INTEGER;
+    let lPrice: number = Number.MAX_SAFE_INTEGER;
+    priceBank.forEach(function (value) {
+      if (value.industry == user.questionBank.industry) {
+        hPrice = Math.max(hPrice, value.premium);
+        lPrice = Math.min(lPrice, value.premium);
+        priceList.push(value);
+      }
+    });
+
+    if (user.role == 'user') {
+      if (user.questionBank.agreesWithTermsAndConds == 'no') {
+        return {
+          priceResult: { description: 'No price selected' },
+        };
+      }
+      return {
+        priceResult: { highestPrice: hPrice, lowestPrice: lPrice },
+      };
+    } else {
+      if (user.questionBank.agreesWithTermsAndConds == 'no') {
+        return {
+          priceResult: { description: 'No price selected' },
+          possiblePrices: priceList,
+        };
+      }
+      return {
+        priceResult: { highestPrice: hPrice, lowestPrice: lPrice },
+        possiblePrices: priceList,
+      };
+    }
   }
 }
 
